@@ -27,9 +27,18 @@ blue_line_stations = [
     "Виставковий центр", "Іподром", "Теремки"
 ]
 
+suburban_stations = [
+    "Дарниця(ел)", "Русанівка", "Лівобережна(ел)", "Микільська Слобідка",
+    "Воскресенка", "Райдужний", "Почайна(ел)", "Куренівська", "Пріорка",
+    "Сирець(ел)", "Берестейська(ел)", "Святошин(ел)", "Борщагівка",
+    "Київ-Волинський", "Караваєві Дачі", "Вокзальна(ел)", "Протасів Яр",
+    "Київ-Деміївський", "Видубичі(ел)", "Березняки", "Дарниця(ел)"
+]
+
 metro_graph.add_nodes_from(red_line_stations)
 metro_graph.add_nodes_from(green_line_stations)
 metro_graph.add_nodes_from(blue_line_stations)
+metro_graph.add_nodes_from(suburban_stations)
 
 
 def add_edges_for_line(line_stations):
@@ -40,11 +49,20 @@ def add_edges_for_line(line_stations):
 add_edges_for_line(red_line_stations)
 add_edges_for_line(green_line_stations)
 add_edges_for_line(blue_line_stations)
+add_edges_for_line(suburban_stations)
 
 # transfers between lines
 metro_graph.add_edge("Хрещатик", "Майдан Незалежності")
 metro_graph.add_edge("Театральна", "Золоті ворота")
 metro_graph.add_edge("Площа Українських Героїв", "Палац спорту")
+
+metro_graph.add_edge("Лівобережна", "Лівобережна(ел)")
+metro_graph.add_edge("Почайна", "Почайна(ел)")
+metro_graph.add_edge("Сирець", "Сирець(ел)")
+metro_graph.add_edge("Берестейська", "Берестейська(ел)")
+metro_graph.add_edge("Святошин", "Святошин(ел)")
+metro_graph.add_edge("Вокзальна", "Вокзальна(ел)")
+metro_graph.add_edge("Видубичі", "Видубичі(ел)")
 
 print("Кількість вершин:", metro_graph.number_of_nodes())
 print("Кількість ребер:", metro_graph.number_of_edges())
@@ -57,6 +75,8 @@ for station in metro_graph.nodes():
         metro_graph.nodes[station]['color'] = 'green'
     elif station in blue_line_stations:
         metro_graph.nodes[station]['color'] = 'blue'
+    elif station in suburban_stations:
+        metro_graph.nodes[station]['color'] = 'grey'
 
 for edge in metro_graph.edges():
     if edge[0] in red_line_stations and edge[1] in red_line_stations:
@@ -65,10 +85,12 @@ for edge in metro_graph.edges():
         metro_graph.edges[edge]['color'] = 'green'
     elif edge[0] in blue_line_stations and edge[1] in blue_line_stations:
         metro_graph.edges[edge]['color'] = 'blue'
+    elif edge[0] in suburban_stations and edge[1] in suburban_stations:
+        metro_graph.edges[edge]['color'] = 'grey'
     else:
         metro_graph.edges[edge]['color'] = 'purple'
 
-pos = nx.spring_layout(metro_graph, seed=55)
+pos = nx.spring_layout(metro_graph, seed=34)
 
 red_nodes = [
     node for node in metro_graph.nodes()
@@ -82,6 +104,10 @@ blue_nodes = [
     node for node in metro_graph.nodes()
     if metro_graph.nodes[node]['color'] == 'blue'
 ]
+suburban_nodes = [
+    node for node in metro_graph.nodes()
+    if metro_graph.nodes[node]['color'] == 'grey'
+]
 
 nx.draw_networkx_nodes(metro_graph, pos, nodelist=red_nodes,
                        node_color='r', label="Red Line")
@@ -89,8 +115,10 @@ nx.draw_networkx_nodes(metro_graph, pos, nodelist=green_nodes,
                        node_color='g', label="Green Line")
 nx.draw_networkx_nodes(metro_graph, pos, nodelist=blue_nodes,
                        node_color='b', label="Blue Line")
+nx.draw_networkx_nodes(metro_graph, pos, nodelist=suburban_nodes,
+                       node_color='#808080', label="Suburban")
 
-for color in ['red', 'green', 'blue', 'purple']:
+for color in ['red', 'green', 'blue', 'purple', 'grey']:
     edges = [
         edge for edge in metro_graph.edges()
         if metro_graph.edges[edge]['color'] == color
