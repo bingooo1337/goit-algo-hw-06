@@ -1,3 +1,4 @@
+import random
 import networkx as nx
 import matplotlib.pyplot as plt
 
@@ -64,6 +65,10 @@ metro_graph.add_edge("Святошин", "Святошин(ел)")
 metro_graph.add_edge("Вокзальна", "Вокзальна(ел)")
 metro_graph.add_edge("Видубичі", "Видубичі(ел)")
 
+random.seed(34)
+for u, v in metro_graph.edges():
+    metro_graph[u][v]['weight'] = random.randint(1, 10)
+
 
 def main():
     print("Кількість вершин:", metro_graph.number_of_nodes())
@@ -129,6 +134,11 @@ def main():
             metro_graph, pos, edgelist=edges, edge_color=color)
 
     nx.draw_networkx_labels(metro_graph, pos, font_size=8)
+
+    edge_labels = nx.get_edge_attributes(metro_graph, 'weight')
+    nx.draw_networkx_edge_labels(
+        metro_graph, pos, edge_labels=edge_labels, font_size=8)
+
     plt.legend()
     plt.axis('off')
     plt.show()
